@@ -9,6 +9,28 @@ class BMICalculatorPage extends StatefulWidget {
 }
 
 class _BMICalculatorPageState extends State<BMICalculatorPage> {
+  bool isMale = true;
+  double height = 183;
+  int weight = 63;
+  int age = 24;
+
+  String bmiCategory(double bmi) {
+  if (bmi < 18.5) return "Underweight";
+  if (bmi < 25) return "Normal";
+  if (bmi < 30) return "Overweight";
+  return "Obese";
+}
+
+  Color bmiCategoryColor(double bmi) {
+  if (bmi < 18.5) return Colors.lightBlue;
+  if (bmi < 25) return Colors.green;
+  if (bmi < 30) return Colors.orange;
+  return Colors.red;
+}
+
+  double calculateBMI({required double height, required int weight}){
+    return weight / ((height / 100) * (height / 100));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +55,42 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                   children: [
                     Expanded(
                       flex: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: kTileBoxDecoration,
-                        child: Column(
-                          children: [
-                            Icon( Icons.male, size: 80, color: kActiveTextColor, ),
-                            Text("Male", style: TextStyle(fontSize: 20, color: kActiveTextColor),)
-                          ],
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            isMale = true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: isMale ? kSelectedTileBoxDecoration : kTileBoxDecoration,
+                          child: Column(
+                            children: [
+                              Icon( Icons.male, size: 80, color: isMale ? kActiveTextColor : kInactiveTextColor, ),
+                              Text("Male", style: TextStyle(fontSize: 20, color: isMale ? kActiveTextColor : kInactiveTextColor),)
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     Spacer(),
                     Expanded(
                       flex: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: kTileBoxDecoration,
-                        child: Column(
-                          children: [
-                            Icon( Icons.female, size: 80, color: kInactiveTextColor,),
-                            Text("Female", style: TextStyle(fontSize: 20, color: kInactiveTextColor),),
-                          ],
+                      child: GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            isMale = false;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: !isMale ? kSelectedTileBoxDecoration : kTileBoxDecoration,
+                          child: Column(
+                            children: [
+                              Icon( Icons.female, size: 80, color: !isMale ? kActiveTextColor : kInactiveTextColor, ),
+                              Text("Female", style: TextStyle(fontSize: 20, color: !isMale ? kActiveTextColor : kInactiveTextColor),),
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -70,15 +106,19 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("183", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
+                          Text(height.toStringAsFixed(1), style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
                           Text("cm", style: TextStyle(fontSize: 20, color: kActiveTextColor),)
                         ],
                       ),
                       Slider(
                         min: 80, 
                         max: 200, 
-                        value: 183, 
-                        onChanged: (value) {},
+                        value: height, 
+                        onChanged: (value) {
+                          setState(() {
+                            height = value;
+                          });
+                        },
                         thumbColor: kButtonColor,
                         activeColor: kActiveTextColor,
                       )
@@ -97,21 +137,33 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                         child: Column(
                           children: [
                             Text("Weight (kg)", style: TextStyle(fontSize: 18, color: kActiveTextColor),),
-                            Text("83", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
+                            Text("$weight", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 FloatingActionButton(
                                   elevation: 0,
                                   backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {}, 
+                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
+                                    setState(() {
+                                      if(weight > 20){
+                                        weight--;
+                                      }
+                                    });
+                                  }, 
                                   child: Icon(Icons.remove, color: kActiveTextColor,)
                                 ),
                                 SizedBox(width: 10,),
                                 FloatingActionButton(
                                   elevation: 0,
                                   backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {}, 
+                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
+                                    setState(() {
+                                      if(weight < 200){
+                                        weight++;
+                                      }            
+                                    });
+                                  }, 
                                   child: Icon(Icons.add, color: kActiveTextColor,)
                                 ),
                               ],
@@ -129,21 +181,33 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                         child: Column(
                           children: [
                             Text("Age (yrs)", style: TextStyle(fontSize: 18, color: kActiveTextColor),),
-                            Text("24", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
+                            Text("$age", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 FloatingActionButton(
                                   elevation: 0,
                                   backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5),onPressed: () {}, 
+                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5),onPressed: () {
+                                    setState(() {
+                                      if(age > 1){
+                                        age--;
+                                      }
+                                    });
+                                  }, 
                                   child: Icon(Icons.remove, color: kActiveTextColor,)
                                 ),
                                 SizedBox(width: 10,),
                                 FloatingActionButton(
                                   elevation: 0,
                                   backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {}, 
+                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
+                                    setState(() {
+                                      if(age < 120){
+                                        age++;
+                                      }
+                                    });
+                                  }, 
                                   child: Icon(Icons.add, color: kActiveTextColor,)
                                 ),
                               ],
@@ -163,7 +227,48 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                 foregroundColor: kActiveTextColor,
                 minimumSize: Size(double.infinity, 50),
               ),
-              onPressed: () {}, 
+              onPressed: () {
+                final bmi = calculateBMI(
+                  height: height, 
+                  weight: weight
+                );
+                final category = bmiCategory(bmi);
+                final categoryColor = bmiCategoryColor(bmi);
+                showDialog(context: context, 
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: categoryColor,
+                    title: const Text('Your BMI'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          bmi.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: kActiveTextColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          category,
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: kActiveTextColor
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                });
+              }, 
               child: const Text('Calculate')
             )
           ],
