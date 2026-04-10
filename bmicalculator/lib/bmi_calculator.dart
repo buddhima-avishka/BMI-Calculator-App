@@ -1,4 +1,7 @@
+import 'package:bmicalculator/age_tile_widget.dart';
 import 'package:bmicalculator/constants.dart';
+import 'package:bmicalculator/gender_tile_widget.dart';
+import 'package:bmicalculator/weight_tile_widget.dart';
 import 'package:flutter/material.dart';
 
 class BMICalculatorPage extends StatefulWidget {
@@ -55,45 +58,27 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                   children: [
                     Expanded(
                       flex: 10,
-                      child: GestureDetector(
-                        onTap: (){
-                          setState(() {
-                            isMale = true;
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: isMale ? kSelectedTileBoxDecoration : kTileBoxDecoration,
-                          child: Column(
-                            children: [
-                              Icon( Icons.male, size: 80, color: isMale ? kActiveTextColor : kInactiveTextColor, ),
-                              Text("Male", style: TextStyle(fontSize: 20, color: isMale ? kActiveTextColor : kInactiveTextColor),)
-                            ],
-                          ),
-                        ),
+                      child: GenderTileWidget(
+                        isMale: isMale,
+                        text: "Male",
+                        icon: Icons.male,
+                        onTapTile: onTapTile,
                       ),
                     ),
                     Spacer(),
                     Expanded(
                       flex: 10,
-                      child: GestureDetector(
-                        onTap: (){
+                      child: GenderTileWidget(
+                        isMale: !isMale,
+                        text: "Female",
+                        icon: Icons.female,
+                        onTapTile: () {
                           setState(() {
                             isMale = false;
                           });
                         },
-                        child: Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: !isMale ? kSelectedTileBoxDecoration : kTileBoxDecoration,
-                          child: Column(
-                            children: [
-                              Icon( Icons.female, size: 80, color: !isMale ? kActiveTextColor : kInactiveTextColor, ),
-                              Text("Female", style: TextStyle(fontSize: 20, color: !isMale ? kActiveTextColor : kInactiveTextColor),),
-                            ],
-                          ),
-                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(height: 30,),
@@ -131,89 +116,43 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                   children: [
                     Expanded(
                       flex: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: kTileBoxDecoration,
-                        child: Column(
-                          children: [
-                            Text("Weight (kg)", style: TextStyle(fontSize: 18, color: kActiveTextColor),),
-                            Text("$weight", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FloatingActionButton(
-                                  elevation: 0,
-                                  backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
-                                    setState(() {
-                                      if(weight > 20){
-                                        weight--;
-                                      }
-                                    });
-                                  }, 
-                                  child: Icon(Icons.remove, color: kActiveTextColor,)
-                                ),
-                                SizedBox(width: 10,),
-                                FloatingActionButton(
-                                  elevation: 0,
-                                  backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
-                                    setState(() {
-                                      if(weight < 200){
-                                        weight++;
-                                      }            
-                                    });
-                                  }, 
-                                  child: Icon(Icons.add, color: kActiveTextColor,)
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                      child: WeightTileWidget(
+                        weight: weight,
+                        onIncrement: () {
+                          setState(() {
+                            if (weight < 200) {
+                              weight++;
+                            }
+                          });
+                        },
+                        onDecrement: () {
+                          setState(() {
+                            if (weight > 20) {
+                              weight--;
+                            }
+                          });
+                        },
                       ),
                     ),
                     Spacer(),
                     Expanded(
                       flex: 10,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: kTileBoxDecoration,
-                        child: Column(
-                          children: [
-                            Text("Age (yrs)", style: TextStyle(fontSize: 18, color: kActiveTextColor),),
-                            Text("$age", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: kActiveTextColor),),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FloatingActionButton(
-                                  elevation: 0,
-                                  backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5),onPressed: () {
-                                    setState(() {
-                                      if(age > 1){
-                                        age--;
-                                      }
-                                    });
-                                  }, 
-                                  child: Icon(Icons.remove, color: kActiveTextColor,)
-                                ),
-                                SizedBox(width: 10,),
-                                FloatingActionButton(
-                                  elevation: 0,
-                                  backgroundColor: kActionButtonColor,
-                                  shape: ShapeBorder.lerp(CircleBorder(), CircleBorder(), 0.5), onPressed: () {
-                                    setState(() {
-                                      if(age < 120){
-                                        age++;
-                                      }
-                                    });
-                                  }, 
-                                  child: Icon(Icons.add, color: kActiveTextColor,)
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                      child: AgeTileWidget(
+                        age: age,
+                        onIncrement: () {
+                          setState(() {
+                            if (age < 120) {
+                              age++;
+                            }
+                          });
+                        },
+                        onDecrement: () {
+                          setState(() {
+                            if (age > 1) {
+                              age--;
+                            }
+                          });
+                        },
                       ),
                     )
                   ],
@@ -275,5 +214,11 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
         ),
       ),
     );
+  }
+
+  onTapTile() {
+    setState(() {
+      isMale = true;
+    });
   }
 }
